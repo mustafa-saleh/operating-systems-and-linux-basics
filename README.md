@@ -59,3 +59,29 @@ docker images
 ## Installation Script
 
 Once the container is running, run the install script "install_java.sh"
+
+```bash
+#!/bin/bash
+
+apt update
+apt install -y default-jre
+
+# 2>&1 the error output of the java -version command will be redirected to the standard output stream
+# awk '{print substr($3,2,2)} takes the line from the previous output and grabs the third section of the string
+# sample response of java -version:
+# openjdk version "21.0.11" 2026-04-21
+# OpenJDK Runtime Environment (build 21.0.11+10-1-24.04.2-Ubuntu)
+# OpenJDK 64-Bit Server VM (build 21.0.11+10-1-24.04.2-Ubuntu, mixed mode, sharing)
+java_version=$(java -version 2>&1 | grep "java version\|openjdk version" | awk '{print substr($3,2,2)}')
+
+if [ "$java_version" == "" ]
+then
+    echo Installing Java has failed. No java version found	
+elif [ "$java_version" == "1." ]
+then
+    echo An old version of Java installation found
+elif [ "$java_version" -ge 11 ]
+then
+    echo Java version 11 or greater installed successfully
+fi
+```
